@@ -10,7 +10,7 @@ body {
   /* flex-direction: column; */
   justify-content: center;
   align-items: center;
-  background-color: #666 !important;
+  background-color: #8e9090 !important;
 }
 .card {
   width: 500px;
