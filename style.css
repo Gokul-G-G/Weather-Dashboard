@@ -7,6 +7,7 @@ body {
   width: 100vw;
   height: 100vh;
   display: flex;
+  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   background-color: #666 !important;
@@ -17,8 +18,8 @@ body {
   min-height: 300px;
   margin: 6.25rem auto 0;
   border-radius: 20px;
-  padding: 2.5rem 2.175rem;
-  /* background: linear-gradient(135deg,#00feba,#5b548a); */
+  padding: 2.5rem 2.175rem 0px 2.175rem;
+  background: linear-gradient(135deg,#00feba,#5b548a);
   text-align: center;
   border-radius: 30px !important;
 }
@@ -32,6 +33,7 @@ body {
   border: 1px solid #555;
   border-radius: 30px;
   margin: 0 auto;
+  margin-bottom: 30px;
 }
 .search input,
 button {
@@ -81,8 +83,9 @@ input::placeholder {
   font-weight: bold;
   font-size: 30px;
 }
-/* Spinner */
 
+
+/* Spinner */
 .spin {
   margin: 0 auto;
   border: 5px solid #f3f3f3; /* Light grey */
@@ -100,4 +103,9 @@ input::placeholder {
   100% {
     transform: rotate(360deg);
   }
+}
+
+
+footer{
+  margin-top: 80px;
 }

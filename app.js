@@ -7,56 +7,39 @@ const spinner = document.querySelector(".spinner");
 const resultCard = document.querySelectorAll(".result-card");
 const imageUpdate = document.getElementById("imageUpdate");
 const error = document.querySelector(".error");
-
+// Images for the Icons
+const weatherIcons = {
+  haze: "./images/haze.png",
+  clear: "./images/clear.png",
+  clouds: "./images/clouds.png",
+  rain: "./images/rain.png",
+  snow: "./images/snow.png",
+  mist: "./images/mist.png",
+  thunderstorm: "./images/thunderstorm.png",
+  drizzle: "./images/drizzle.png",
+  smoke: "./images/smoke.png",
+};
+// Declare colors for the card
+const backgroundColors = {
+  hot: "orange",
+  warm: "green",
+  cool: "blue",
+};
+// Event listener
 searchBtn.addEventListener("click", () => {
   const city = document.getElementById("cityInput").value.toLowerCase();
-  // Clear previous data
   clearResults();
-
-  // Show the spinner
   displayLoading();
 
-  // Fetch details from API
   fetchWeather(city)
-    .then((data) => {
-      console.log(data);
-      temperature.innerText = `${data.main.temp}°C`;
-      weather.innerText = data.weather[0].description;
-      humidity.innerText = `${data.main.humidity}%`;
-      windSpeed.innerText = `${data.wind.speed}m/S`;
-      const iconChange = data.weather[0].main;
-      const check = iconChange.toLowerCase();
-      switch (check) {
-        case "haze":
-          imageUpdate.src = "./images/haze.png";
-          break;
-        case "clear":
-          imageUpdate.src = "./images/clear.png";
-          break;
-        case "clouds":
-          imageUpdate.src = "./images/clouds.png";
-          break;
-        case "rain":
-          imageUpdate.src = "./images/rain.png";
-          break;
-        case "snow":
-          imageUpdate.src = "./images/snow.png";
-          break;
-        case "mist":
-          imageUpdate.src = "./images/mist.png";
-          break;
-      }
-    })
+    .then(updateUI)
     .catch((err) => {
-      error.innerText = err;
+      error.innerText = err.message || "An error occurred.";
     })
     .finally(() => {
-      // Stop the spinner
       spinner.classList.remove("spin");
       imageUpdate.style.display = "block";
-      for (let i = 0; i < resultCard.length; i++) {
-        resultCard[i].style.display = "block";
-      }
+      resultCard.forEach((card) => (card.style.display = "block"));
     });
 });
 
@@ -79,6 +62,25 @@ function fetchWeather(city, delay = 3000) {
   });
 }
 
+function updateUI(data) {
+  temperature.innerText = `${data.main.temp}°C`;
+  weather.innerText = data.weather[0].description;
+  humidity.innerText = `${data.main.humidity}%`;
+  windSpeed.innerText = `${data.wind.speed} m/s`;
+
+  const iconKey = data.weather[0].main.toLowerCase();
+  imageUpdate.src = weatherIcons[iconKey] || ""; // Default to empty if no icon matches
+
+  // Set background color based on temperature
+  let bgColor = backgroundColors.cool; // Default to cool
+  if (data.main.temp >= 30) {
+    bgColor = backgroundColors.hot;
+  } else if (data.main.temp < 30 && data.main.temp > 20) {
+    bgColor = backgroundColors.warm;
+  }
+  resultCard.forEach((card) => (card.style.backgroundColor = bgColor));
+}
+// Spinner
 function displayLoading() {
   spinner.classList.add("spin");
 }
@@ -88,10 +90,8 @@ function clearResults() {
   weather.innerText = "";
   humidity.innerText = "--";
   windSpeed.innerText = "--";
-  imageUpdate.src = ""; // Optionally reset the image source
-  error.innerText = ""; // Clear any previous error messages
-  imageUpdate.style.display = "none"; // Hide the image initially
-  for (let i = 0; i < resultCard.length; i++) {
-    resultCard[i].style.display = "none"; // Hide result cards until data is fetched
-  }
+  imageUpdate.src = "";
+  error.innerText = "";
+  imageUpdate.style.display = "none";
+  resultCard.forEach((card) => (card.style.display = "none"));
 }
