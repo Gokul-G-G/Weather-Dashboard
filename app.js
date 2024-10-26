@@ -44,15 +44,22 @@ submit.addEventListener("submit", (e) => {
   } else {
     clearResults();
     displayLoading();
+    searchBtn.disabled = true; //disable button during fetch
 
     fetchWeather(city)
       .then(updateUI)
       .catch((err) => {
-        imageUpdate.src = "./images/404.png"; // Ensure this path is correct
-        error.innerText = err.message || "An error occurred.";
+        const message =
+          err.message === "404"
+            ? "Oops! We couldn't find that city. Please check the name."
+            : "An error occurred. Please try again later.";
+        imageUpdate.src = "./images/404.png";
+        error.innerText = message;
       })
       .finally(() => {
         spinner.classList.remove("spin");
+        document.getElementById("loadingText").style.display = "none";
+        searchBtn.disabled = false; //button enabled
         imageUpdate.style.display = "block";
         resultCard.forEach((card) => (card.style.display = "block"));
         cityInput.value = "";
@@ -69,7 +76,11 @@ function fetchWeather(city, delay = 3000) {
       fetch(url)
         .then((response) => {
           if (!response.ok) {
-            throw new Error("City not found");
+            if (response.status === 404) {
+              throw new Error("404");
+            } else {
+              throw new Error("An unexpected error occurred.");
+            }
           }
           return response.json();
         })
@@ -102,6 +113,7 @@ function updateUI(data) {
 // Spinner
 function displayLoading() {
   spinner.classList.add("spin");
+  document.getElementById("loadingText").style.display = "block";
 }
 
 function clearResults() {
@@ -114,4 +126,5 @@ function clearResults() {
   error.innerText = "";
   imageUpdate.style.display = "none";
   resultCard.forEach((card) => (card.style.display = "none"));
+  document.getElementById("loadingText").style.display = "none";
 }

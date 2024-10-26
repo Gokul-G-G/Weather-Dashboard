@@ -105,6 +105,13 @@ input::placeholder {
   }
 }
 
+#loadingText {
+  font-size: 1.5rem;
+  color: #f4f6f8; 
+  margin-top: 20px;
+  display: none;
+}
+
 footer {
   margin-top: 80px;
 }
