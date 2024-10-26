@@ -6,7 +6,9 @@ const windSpeed = document.getElementById("wind");
 const spinner = document.querySelector(".spinner");
 const resultCard = document.querySelectorAll(".result-card");
 const imageUpdate = document.getElementById("imageUpdate");
+const cityName = document.getElementById("nameCity");
 const error = document.querySelector(".error");
+
 // Images for the Icons
 const weatherIcons = {
   haze: "./images/haze.png",
@@ -19,28 +21,39 @@ const weatherIcons = {
   drizzle: "./images/drizzle.png",
   smoke: "./images/smoke.png",
 };
+
 // Declare colors for the card
 const backgroundColors = {
   hot: "orange",
   warm: "green",
   cool: "blue",
 };
+
 // Event listener
 searchBtn.addEventListener("click", () => {
-  const city = document.getElementById("cityInput").value.toLowerCase();
-  clearResults();
-  displayLoading();
+  const city = document.getElementById("cityInput").value.trim().toLowerCase();
+  // To check the input is empty
+  if (!city) {
+    clearResults();
+    error.innerText = "Oops! Please enter a city name.";
+    imageUpdate.src = "./images/error.png";
+    imageUpdate.style.display = "block";
+  } else {
+    clearResults();
+    displayLoading();
 
-  fetchWeather(city)
-    .then(updateUI)
-    .catch((err) => {
-      error.innerText = err.message || "An error occurred.";
-    })
-    .finally(() => {
-      spinner.classList.remove("spin");
-      imageUpdate.style.display = "block";
-      resultCard.forEach((card) => (card.style.display = "block"));
-    });
+    fetchWeather(city)
+      .then(updateUI)
+      .catch((err) => {
+        imageUpdate.src = "./images/404.png";
+        error.innerText = err.message || "An error occurred.";
+      })
+      .finally(() => {
+        spinner.classList.remove("spin");
+        imageUpdate.style.display = "block";
+        resultCard.forEach((card) => (card.style.display = "block"));
+      });
+  }
 });
 
 function fetchWeather(city, delay = 3000) {
@@ -63,6 +76,7 @@ function fetchWeather(city, delay = 3000) {
 }
 
 function updateUI(data) {
+  cityName.innerText = `${data.name}`;
   temperature.innerText = `${data.main.temp}°C`;
   weather.innerText = data.weather[0].description;
   humidity.innerText = `${data.main.humidity}%`;
@@ -75,11 +89,12 @@ function updateUI(data) {
   let bgColor = backgroundColors.cool; // Default to cool
   if (data.main.temp >= 30) {
     bgColor = backgroundColors.hot;
-  } else if (data.main.temp < 30 && data.main.temp > 20) {
+  } else if (data.main.temp >= 20) {
     bgColor = backgroundColors.warm;
   }
   resultCard.forEach((card) => (card.style.backgroundColor = bgColor));
 }
+
 // Spinner
 function displayLoading() {
   spinner.classList.add("spin");
@@ -88,6 +103,7 @@ function displayLoading() {
 function clearResults() {
   temperature.innerText = "--";
   weather.innerText = "";
+  cityName.innerText = "";
   humidity.innerText = "--";
   windSpeed.innerText = "--";
   imageUpdate.src = "";
