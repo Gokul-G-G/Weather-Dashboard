@@ -8,6 +8,7 @@ const resultCard = document.querySelectorAll(".result-card");
 const imageUpdate = document.getElementById("imageUpdate");
 const cityName = document.getElementById("nameCity");
 const error = document.querySelector(".error");
+const submit = document.getElementById("submitForm");
 
 // Images for the Icons
 const weatherIcons = {
@@ -30,9 +31,11 @@ const backgroundColors = {
 };
 
 // Event listener
-searchBtn.addEventListener("click", () => {
+submit.addEventListener("submit", (e) => {
+  e.preventDefault();
   const city = document.getElementById("cityInput").value.trim().toLowerCase();
-  // To check the input is empty
+
+  // To check if the input is empty
   if (!city) {
     clearResults();
     error.innerText = "Oops! Please enter a city name.";
@@ -45,13 +48,14 @@ searchBtn.addEventListener("click", () => {
     fetchWeather(city)
       .then(updateUI)
       .catch((err) => {
-        imageUpdate.src = "./images/404.png";
+        imageUpdate.src = "./images/404.png"; // Ensure this path is correct
         error.innerText = err.message || "An error occurred.";
       })
       .finally(() => {
         spinner.classList.remove("spin");
         imageUpdate.style.display = "block";
         resultCard.forEach((card) => (card.style.display = "block"));
+        cityInput.value = "";
       });
   }
 });

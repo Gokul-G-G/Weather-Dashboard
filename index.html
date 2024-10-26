@@ -19,16 +19,16 @@
     <!-- Card -->
     <div class="card">
       <h1 class="card-title">Weather Dashboard</h1>
-      <div class="search">
+      <form class="search" id="submitForm">
         <input
           type="text"
           placeholder="Enter city name"
           autocomplete="off"
           id="cityInput" />
-        <button id="searchBtn">
+        <button type="submit" id="searchBtn">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-      </div>
+      </form>
       <!-- Spinner or Loader -->
       <div class="spinner"></div>
       <!-- Result -->
